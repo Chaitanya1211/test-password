@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:passwordless/helper/fileHandler.dart';
+import 'package:passwordless/helper/sharedPrefs.dart';
 
 import '../api/api.dart';
 import '../helper/alert.dart';
@@ -16,7 +20,9 @@ class _RegisterState extends State<Register> {
   final TextEditingController _username = TextEditingController();
   Api apiCall = Api();
   Alert alert = Alert();
+  SharedPrefs shared = SharedPrefs();
   Keys key = Keys();
+  FileHandler file = FileHandler();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,8 +65,25 @@ class _RegisterState extends State<Register> {
                         final privateKey = result[1];
                         print("Public Key" + publicKey);
                         print("Private Key" + privateKey);
-                        // var registerResponse = await apiCall
-                        //     .registerUser(_username.text.trim().toString());
+                        var registerResponse = await apiCall.registerUser(
+                            _username.text.trim().toString(), publicKey);
+                        print(registerResponse);
+                        if (registerResponse["message"] ==
+                            "User Registered Successfully") {
+                          // shared.setPrivateKey(privateKey);
+                          file.saveFile(privateKey);
+                          String key = await file.readFile();
+                          print(" Pvt Key " + key);
+                          alert.showMyDialog(
+                              context,
+                              "User Registration Successfull",
+                              "You have registered successfully.");
+                        } else {
+                          alert.showMyDialog(
+                              context,
+                              "User Registration Unsuccessfull",
+                              "Registration unsuccessfull. Please try again later");
+                        }
                         // if (registerResponse["message"] ==
                         //     "User Registered Successfully") {
                         //   shared.setPublicKey(registerResponse["publicKey"]);
