@@ -15,10 +15,20 @@ route.get("/secret", async (req, res) => {
     const publicKey = response["publicKey"];
     const buffer = Buffer.from("Hello", "utf8");
     const encrypted = crypto.publicEncrypt(publicKey, buffer);
-    // print(encrypted.toString("base64"));
-    // print(encryptedData.toString("base64"));
-    // res.send(encrypted.toString("base64"));
     res.send({ secret: encrypted.toString("base64") });
   } catch (err) {}
+});
+
+route.get("/verify", async (req, res) => {
+  const { username, decryptedText, flag } = req.body;
+  try {
+    if (decryptedText == "Hello" && flag == 1) {
+      res.send({ message: "granted" });
+    } else {
+      res.send({ message: "denied" });
+    }
+  } catch (err) {
+    res.send({ message: err });
+  }
 });
 module.exports = route;

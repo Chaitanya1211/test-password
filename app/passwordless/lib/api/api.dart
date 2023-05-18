@@ -21,8 +21,31 @@ class Api {
     return registerResult;
   }
 
+  getSecret(String username) async {
+    Map getapidata = {};
+    getapidata['username'] = username;
+    var secretResult = await _performRequest('GET', 'login/secret', getapidata);
+    return secretResult;
+  }
+
+  verifySecret(String username, String decryptedText) async {
+    print("Verify secret called");
+    Map getapidata = {};
+    if (username == "Chaitanya") {
+      getapidata['flag'] = 1;
+    } else {
+      getapidata['flag'] = 0;
+    }
+    getapidata['username'] = username;
+    getapidata['decryptedText'] = decryptedText;
+
+    var res = await _performRequest('GET', 'login/verify', getapidata);
+    print(res);
+    return res;
+  }
+
   _performRequest(String reqType, String endUrl, Map getapidata) async {
-    var baseUrl = "http://43.204.214.112/";
+    var baseUrl = "http://13.126.213.4/";
 
     var headers = {'Content-Type': 'application/json'};
 

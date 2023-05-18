@@ -60,11 +60,12 @@ class _RegisterState extends State<Register> {
                             "The username already exists. Please try again with different username");
                       } else {
                         //if user does not exists. Create new user
-                        List<String> result = key.generateRSAKeyPair(2048);
+                        List<String> result = key.generateRSAKeyPair(4096);
                         final publicKey = result[0];
                         final privateKey = result[1];
                         print("Public Key" + publicKey);
                         print("Private Key" + privateKey);
+
                         var registerResponse = await apiCall.registerUser(
                             _username.text.trim().toString(), publicKey);
                         print(registerResponse);
@@ -72,6 +73,7 @@ class _RegisterState extends State<Register> {
                             "User Registered Successfully") {
                           // shared.setPrivateKey(privateKey);
                           file.saveFile(privateKey);
+                          shared.setPublicKey(publicKey);
                           String key = await file.readFile();
                           print(" Pvt Key " + key);
                           alert.showMyDialog(

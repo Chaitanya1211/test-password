@@ -1,5 +1,8 @@
 import "package:flutter/material.dart";
+import "package:passwordless/api/api.dart";
 import "package:passwordless/screens/register.dart";
+
+import "../safe/keys.dart";
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,6 +14,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _username = TextEditingController();
+  Api api = Api();
+  Keys key = Keys();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,13 +52,24 @@ class _LoginState extends State<Login> {
                           child: ElevatedButton(
                             child: const Text('Login'),
                             onPressed: () async {
-                              // String username =
-                              //     _username.text.toString().trim();
+                              String username =
+                                  _username.text.toString().trim();
                               // // encrypt username using publickey from shared prefs
                               // String secret = await key.encryptData(username);
                               // //send the ebcrypted text to server
                               // var res = await api.login(username, secret);
                               //allow user login
+                              //get secret
+                              var result = await api.getSecret(username);
+                              // print(result["secret"]);
+                              var response = result["secret"];
+                              print(response);
+                              //decrypt secret
+                              var dec =
+                                  await key.encryptDecrypt(username, response);
+                              print(dec);
+
+                              //send decrypted and allow access
                             },
                           )),
                     ],
